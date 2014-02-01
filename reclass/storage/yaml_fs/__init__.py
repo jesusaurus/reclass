@@ -42,10 +42,13 @@ class ExternalNodeStorage(NodeStorageBase):
             filenames = fnmatch.filter(filenames, '*{0}'.format(FILE_EXTENSION))
             vvv('REGISTER {0} in path {1}'.format(filenames, dirpath))
             for f in filenames:
-                name = os.path.splitext(f)[0]
                 uri = os.path.join(dirpath, f)
+                rel = os.path.relpath(uri, basedir)
+                short = os.path.splitext(rel)[0]
+                name = short.replace(os.path.sep, '.')
                 if name in ret and callable(duplicate_handler):
                     duplicate_handler(name, os.path.join(basedir, ret[name]), uri)
+                vvv('REGISTERING {0}'.format(name))
                 ret[name] = os.path.relpath(uri, basedir)
 
         d = Directory(basedir)
